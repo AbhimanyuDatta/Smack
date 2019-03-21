@@ -9,4 +9,11 @@
     <string name="login">LOGIN</string>
     <string name="no_account_msg">Don\'t have an account?</string>
     <string name="create_account">Create Account</string>
+    <string name="sign_up">SIGN UP HERE</string>
+    <string name="password">password</string>
+    <string name="email">email</string>
+    <string name="user_name">user name</string>
+    <string name="generate_avatar_txt">Tap to generate user avatar</string>
+    <string name="create_user">Create User</string>
+    <string name="generate_background_color">Generate Background Color</string>
 </resources>
