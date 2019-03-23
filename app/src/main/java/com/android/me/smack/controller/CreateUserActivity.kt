@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.android.me.smack.R
 import com.android.me.smack.service.AuthService
+import com.android.me.smack.service.UserDataService
 import com.android.me.smack.util.COLOR_BOUND
 import com.android.me.smack.util.DRAWABLE
 import com.android.me.smack.util.IMAGE_BOUND
@@ -50,6 +51,7 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view: View) {
+        val userName = createUserNameTxt.text.toString()
         val email = createEmailTxt.text.toString()
         val password = createPasswordTxt.text.toString()
 
@@ -57,8 +59,16 @@ class CreateUserActivity : AppCompatActivity() {
             if (registerSuccess) {
                 AuthService.loginUser(this, email, password) { loginSuccess ->
                     if (loginSuccess) {
-                        println(AuthService.authToken)
-                        println(AuthService.userEmail)
+                        AuthService.createUser(this, userName, email, userAvatar, avatarColor) { createSuccess ->
+                            if (createSuccess) {
+                                println(UserDataService.avatarName)
+                                println(UserDataService.avatarColor)
+                                println(UserDataService.name)
+                                finish()
+                            } else {
+
+                            }
+                        }
                     } else {
 
                     }
