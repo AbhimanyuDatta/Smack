@@ -27,8 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="ABD"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/userImgNavHeader"
         app:layout_constraintTop_toTopOf="@+id/userImgNavHeader"
         tools:text="ABD" />
@@ -39,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="abd@email.com"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/userImgNavHeader"
         app:layout_constraintTop_toBottomOf="@+id/usernameNavHeader"
         tools:text="abd@email.com" />
@@ -52,8 +51,9 @@
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
         android:onClick="loginBtnNavClicked"
-        android:text="Login"
+        android:text="@string/login"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

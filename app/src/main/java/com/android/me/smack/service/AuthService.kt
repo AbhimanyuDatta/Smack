@@ -1,7 +1,9 @@
 package com.android.me.smack.service
 
 import android.content.Context
+import android.content.Intent
 import android.service.autofill.UserData
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.android.me.smack.util.*
 import com.android.volley.Request
@@ -116,6 +118,41 @@ object AuthService {
         }
 
         Volley.newRequestQueue(context).add(createRequest)
+    }
+
+    fun findUserByEmail(context: Context, complete: (Boolean) -> Unit) {
+        val findUserRequest = object : JsonObjectRequest(Request.Method.GET, "$URL_GET_USER$userEmail", null, Response.Listener { response ->
+            try {
+                UserDataService.name = response.getString(NAME)
+                UserDataService.email = response.getString(EMAIL)
+                UserDataService.avatarName = response.getString(AVATAR_NAME)
+                UserDataService.avatarColor = response.getString(AVATAR_COLOR)
+                UserDataService.id = response.getString(KEY_ID)
+
+                val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(userDataChange)
+
+                complete(true)
+            } catch (e: JSONException) {
+                Log.d("JSON", "Unable to parse response: ${e.localizedMessage}")
+                complete(false)
+            }
+        }, Response.ErrorListener { error ->
+            Log.d("ERROR", "Could not find user: $error")
+            complete(false)
+        }) {
+            override fun getBodyContentType(): String {
+                return "application/json; charset=UTF-8"
+            }
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "Bearer $authToken"
+                return headers
+            }
+        }
+
+        Volley.newRequestQueue(context).add(findUserRequest)
     }
 
 }
