@@ -1,9 +1,10 @@
-package com.android.me.smack
+package com.android.me.smack.controller
 
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.android.me.smack.R
 import com.android.me.smack.util.COLOR_BOUND
 import com.android.me.smack.util.DRAWABLE
 import com.android.me.smack.util.IMAGE_BOUND
