@@ -15,3 +15,11 @@ q
 Aapp/src/main/java/com/android/me/smack/service/UserDataService.kt,b\a\ba67340e5e003df9845f3033c941eb6684b8cec2
 q
 Aapp/src/main/java/com/android/me/smack/controller/MainActivity.kt,e\7\e77c6b945f3a43464052026473689a20c8d09cb5
+j
+:app/src/main/java/com/android/me/smack/util/SharedPrefs.kt,6\7\6703f1483c8c6842958d71576fe83808960ae5e7
+g
+7app/src/main/java/com/android/me/smack/model/Channel.kt,e\0\e0eb7d0685a3866305d68c0ef2b6f2e66aeec54f
+h
+8app/src/main/java/com/android/me/smack/controller/App.kt,6\f\6fdf3e9095ddd19ff98710b08eea4b8de0397d2b
+p
+@app/src/main/java/com/android/me/smack/service/MessageService.kt,0\1\0143248891053c1b08bc70b68ecfd575f8dce8f5

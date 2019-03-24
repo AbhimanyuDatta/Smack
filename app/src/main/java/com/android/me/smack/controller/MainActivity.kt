@@ -3,18 +3,17 @@ package com.android.me.smack.controller
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Message
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import com.android.me.smack.R
 import com.android.me.smack.model.Channel
+import com.android.me.smack.model.Message
 import com.android.me.smack.service.AuthService
 import com.android.me.smack.service.MessageService
 import com.android.me.smack.service.UserDataService
@@ -60,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", onNewChannel)
+
+        socket.on("messageCreated", onNewMessage)
 
         channel_list.setOnItemClickListener { _, _, position, _ ->
             selectedChannel = MessageService.channels[position]
@@ -163,8 +164,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onNewMessage = Emitter.Listener { args ->
+        runOnUiThread {
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val userAvatar = args[4] as String
+            val userAvatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+            val newMessage = Message(msgBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
+            MessageService.messages.add(newMessage)
+            println(newMessage.message)
+        }
+    }
+
     fun sendMsgBtnClicked(view: View) {
-        hideKeyboard()
+        if (App.prefs.isLoggedIn && msgTxt.text.isNotBlank() && selectedChannel != null) {
+            val userId = UserDataService.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", msgTxt.text.toString(), userId, channelId, UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+            msgTxt.text.clear()
+            hideKeyboard()
+        }
     }
 
     private fun hideKeyboard() {
