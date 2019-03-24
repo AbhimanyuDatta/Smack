@@ -12,12 +12,15 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.android.me.smack.R
+import com.android.me.smack.model.Channel
 import com.android.me.smack.service.AuthService
+import com.android.me.smack.service.MessageService
 import com.android.me.smack.service.UserDataService
 import com.android.me.smack.util.BROADCAST_USER_DATA_CHANGE
 import com.android.me.smack.util.DRAWABLE
 import com.android.me.smack.util.SOCKET_URL
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_channel_dialog.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -43,11 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         // broadcast receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
-    }
-
-    override fun onResume() {
         socket.connect()
-        super.onResume()
+        socket.on("channelCreated", onNewChannel)
     }
 
     override fun onDestroy() {
@@ -111,6 +111,20 @@ class MainActivity : AppCompatActivity() {
                     // cancel dialog
                 }
                 .show()
+        }
+    }
+
+    private val onNewChannel = Emitter.Listener { args ->
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDesc = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName, channelDesc, channelId)
+            MessageService.channels.add(newChannel)
+            Log.d("CHANNEL", newChannel.name)
+            Log.d("CHANNEL", newChannel.description)
+            Log.d("CHANNEL", newChannel.id)
         }
     }
 
