@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
         val password = loginPasswordTxt.text.toString()
         hideKeyboard()
         if (email.isNotBlank() && password.isNotBlank()) {
-            AuthService.loginUser(this, email, password) { loginSuccess ->
+            AuthService.loginUser(email, password) { loginSuccess ->
                 if (loginSuccess) {
                     AuthService.findUserByEmail(this) { findSuccess ->
                         if (findSuccess) {
@@ -68,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (inputManager.isAcceptingText) {
-            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
         }
     }
 }

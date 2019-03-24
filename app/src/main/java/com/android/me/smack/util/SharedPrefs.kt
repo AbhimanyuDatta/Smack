@@ -2,6 +2,7 @@ package com.android.me.smack.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 
 class SharedPrefs(context: Context) {
@@ -13,12 +14,12 @@ class SharedPrefs(context: Context) {
         set(value) = prefs.edit().putBoolean(IS_LOGGED_IN, value).apply()
 
     var authToken: String?
-        get() = prefs.getString(AUTH_TOKEN, "")
+        get() = prefs.getString(AUTH_TOKEN, EMPTY_STR)
         set(value) = prefs.edit().putString(AUTH_TOKEN, value).apply()
 
     var userEmail: String?
-        get() = prefs.getString(USER_EMAIL, "")
+        get() = prefs.getString(USER_EMAIL, EMPTY_STR)
         set(value) = prefs.edit().putString(USER_EMAIL, value).apply()
 
-    val requestQueue = Volley.newRequestQueue(context)
+    val requestQueue: RequestQueue = Volley.newRequestQueue(context)
 }

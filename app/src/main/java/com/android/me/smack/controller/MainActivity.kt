@@ -20,12 +20,14 @@ import com.android.me.smack.service.MessageService
 import com.android.me.smack.service.UserDataService
 import com.android.me.smack.util.BROADCAST_USER_DATA_CHANGE
 import com.android.me.smack.util.DRAWABLE
+import com.android.me.smack.util.EMPTY_STR
 import com.android.me.smack.util.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_channel_dialog.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private val socket = IO.socket(SOCKET_URL)
     private lateinit var channelAdapter: ArrayAdapter<Channel>
+    private var selectedChannel: Channel? = null
 
     private fun setupAdapters() {
         channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
@@ -58,6 +61,12 @@ class MainActivity : AppCompatActivity() {
         socket.connect()
         socket.on("channelCreated", onNewChannel)
 
+        channel_list.setOnItemClickListener { _, _, position, _ ->
+            selectedChannel = MessageService.channels[position]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            updateWithChannel()
+        }
+
         if (App.prefs.isLoggedIn) {
             AuthService.findUserByEmail(this) {}
         }
@@ -80,13 +89,22 @@ class MainActivity : AppCompatActivity() {
                 nav_drawer_header_include.userImgNavHeader.setBackgroundColor(UserDataService.getAvatarColor(UserDataService.avatarColor))
                 nav_drawer_header_include.loginBtnNavHeader.text = getString(R.string.logout)
 
-                MessageService.getChannels(context) {complete ->
+                MessageService.getChannels {complete ->
                     if (complete) {
-                        channelAdapter.notifyDataSetChanged()
+                        if (MessageService.channels.count() > 0) {
+                            selectedChannel = MessageService.channels[0]
+                            channelAdapter.notifyDataSetChanged()
+                            updateWithChannel()
+                        }
                     }
                 }
             }
         }
+    }
+
+    fun updateWithChannel() {
+        mainChannelName.text = "#${selectedChannel?.name}"
+        // download messages for channels
     }
 
     override fun onBackPressed() {
@@ -101,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         if (App.prefs.isLoggedIn) {
             UserDataService.logout()
             usernameNavHeader.text = getString(R.string.login)
-            userEmailNavHeader.text = ""
+            userEmailNavHeader.text = EMPTY_STR
             userImgNavHeader.setImageResource(R.drawable.profiledefault)
             userImgNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginBtnNavHeader.text = getString(R.string.login)
@@ -116,7 +134,7 @@ class MainActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
             builder.setView(dialogView)
-                .setPositiveButton("Add") { dialog: DialogInterface?, which: Int ->
+                .setPositiveButton("Add") { _: DialogInterface?, _: Int ->
                     // perform logic when clicked
                     val nameTextField = dialogView.addChannelNameTxt
                     val descTextField = dialogView.addChannelDescTxt
@@ -126,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                     // create channel with channel name and desc
                     socket.emit("newChannel", channelName, channelDesc)
                 }
-                .setNegativeButton("Cancel") { dialog: DialogInterface?, which: Int ->
+                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int ->
                     // cancel dialog
                 }
                 .show()

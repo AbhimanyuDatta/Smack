@@ -3,18 +3,19 @@ package com.android.me.smack.service
 import android.graphics.Color
 import com.android.me.smack.controller.App
 import com.android.me.smack.util.COLOR_BOUND
+import com.android.me.smack.util.EMPTY_STR
 import java.util.*
 
 object UserDataService {
 
-    var id = ""
-    var avatarColor = ""
-    var avatarName = ""
-    var email = ""
-    var name = ""
+    var id = EMPTY_STR
+    var avatarColor = EMPTY_STR
+    var avatarName = EMPTY_STR
+    var email = EMPTY_STR
+    var name = EMPTY_STR
 
     fun getAvatarColor(components: String): Int {
-        val strippedColor = components.replace("[", "").replace("]", "").replace(",", "")
+        val strippedColor = components.replace("[", EMPTY_STR).replace("]", EMPTY_STR).replace(",", EMPTY_STR)
         var red = 0
         var green = 0
         var blue = 0
@@ -29,14 +30,14 @@ object UserDataService {
     }
 
     fun logout() {
-        id = ""
-        avatarColor = ""
-        avatarName = ""
-        email = ""
-        name = ""
+        id = EMPTY_STR
+        avatarColor = EMPTY_STR
+        avatarName = EMPTY_STR
+        email = EMPTY_STR
+        name = EMPTY_STR
 
-        App.prefs.authToken = ""
-        App.prefs.userEmail = ""
+        App.prefs.authToken = EMPTY_STR
+        App.prefs.userEmail = EMPTY_STR
         App.prefs.isLoggedIn = false
     }
 
