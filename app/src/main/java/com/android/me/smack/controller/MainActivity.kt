@@ -57,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", onNewChannel)
+
+        if (App.prefs.isLoggedIn) {
+            AuthService.findUserByEmail(this) {}
+        }
     }
 
     override fun onDestroy() {
@@ -68,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     private val userDataChangeReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent?) {
-            if (AuthService.isLoggedIn) {
+            if (App.prefs.isLoggedIn) {
                 nav_drawer_header_include.usernameNavHeader.text = UserDataService.name
                 nav_drawer_header_include.userEmailNavHeader.text = UserDataService.email
                 val resourceId = resources.getIdentifier(UserDataService.avatarName, DRAWABLE, packageName)
@@ -94,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.prefs.isLoggedIn) {
             UserDataService.logout()
             usernameNavHeader.text = getString(R.string.login)
             userEmailNavHeader.text = ""
@@ -108,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.prefs.isLoggedIn) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
             builder.setView(dialogView)

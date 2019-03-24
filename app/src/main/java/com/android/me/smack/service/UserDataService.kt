@@ -1,6 +1,7 @@
 package com.android.me.smack.service
 
 import android.graphics.Color
+import com.android.me.smack.controller.App
 import com.android.me.smack.util.COLOR_BOUND
 import java.util.*
 
@@ -34,9 +35,9 @@ object UserDataService {
         email = ""
         name = ""
 
-        AuthService.authToken = ""
-        AuthService.userEmail = ""
-        AuthService.isLoggedIn = false
+        App.prefs.authToken = ""
+        App.prefs.userEmail = ""
+        App.prefs.isLoggedIn = false
     }
 
 }
