@@ -3,6 +3,7 @@ package com.android.me.smack.controller
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Message
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import com.android.me.smack.R
 import com.android.me.smack.model.Channel
 import com.android.me.smack.service.AuthService
@@ -29,7 +31,13 @@ import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    val socket = IO.socket(SOCKET_URL)
+    private val socket = IO.socket(SOCKET_URL)
+    private lateinit var channelAdapter: ArrayAdapter<Channel>
+
+    private fun setupAdapters() {
+        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+        setupAdapters()
 
         // broadcast receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
 
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
             if (AuthService.isLoggedIn) {
                 nav_drawer_header_include.usernameNavHeader.text = UserDataService.name
                 nav_drawer_header_include.userEmailNavHeader.text = UserDataService.email
@@ -66,6 +75,12 @@ class MainActivity : AppCompatActivity() {
                 nav_drawer_header_include.userImgNavHeader.setImageResource(resourceId)
                 nav_drawer_header_include.userImgNavHeader.setBackgroundColor(UserDataService.getAvatarColor(UserDataService.avatarColor))
                 nav_drawer_header_include.loginBtnNavHeader.text = getString(R.string.logout)
+
+                MessageService.getChannels(context) {complete ->
+                    if (complete) {
+                        channelAdapter.notifyDataSetChanged()
+                    }
+                }
             }
         }
     }
@@ -122,9 +137,7 @@ class MainActivity : AppCompatActivity() {
 
             val newChannel = Channel(channelName, channelDesc, channelId)
             MessageService.channels.add(newChannel)
-            Log.d("CHANNEL", newChannel.name)
-            Log.d("CHANNEL", newChannel.description)
-            Log.d("CHANNEL", newChannel.id)
+            channelAdapter.notifyDataSetChanged()
         }
     }
 
